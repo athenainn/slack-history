@@ -3,11 +3,13 @@
 extern crate curl;
 extern crate rustc_serialize;
 extern crate ini;
+extern crate regex;
 
 use std::str;
 use std::string;
 use std::collections::BTreeMap;
 use std::collections::HashMap;
+use regex::Regex;
 
 // misc
 pub mod util {
@@ -197,13 +199,22 @@ pub fn main() {
   let mut channel_id = channel::get_channel_id(&(api_conf.token), &(api_conf.channel)).unwrap();
   let messages : history::Messages = history::get_messages(&(api_conf.token), &(channel_id));
   let mut messages_it = messages.messages.into_iter();
+  let re = Regex::new(r"<@(U[a-zA-Z0-9]+)").unwrap();
   loop {
     if let Some(message) = messages_it.next() {
-      let text_str = match str::from_utf8(message.text.as_bytes()) {
+      let mut text_str = match str::from_utf8(message.text.as_bytes()) {	  
         Ok(e) => e,
         Err(e) => panic!("Invalid UTF-8 sequence"),
       };
-      println!("{}", text_str);
+      let mut final_str = text_str.to_string();
+      for cap in re.captures_iter(text_str) {
+        let user_id = cap.at(1).unwrap_or("").to_string();
+        if !id_name_mapping.contains_key(&user_id) {
+          continue;
+        }
+        final_str = final_str.replace(cap.at(1).unwrap_or(""), id_name_mapping.get(&user_id).unwrap());
+      }
+      println!("{}", final_str);
     } else {
       break;
     }
