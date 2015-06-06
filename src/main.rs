@@ -1,4 +1,4 @@
-#![feature(core)]
+// #![feature(core)]
 #![feature(custom_derive, plugin)]
 extern crate curl;
 extern crate rustc_serialize;
