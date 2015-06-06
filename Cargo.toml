@@ -4,5 +4,6 @@ version = "0.1.0"
 authors = ["kloer"]
 
 [dependencies]
-curl = "0.2.9"
+curl = "0.2.10"
 rust-ini = "0.5.0"
+rustc-serialize = "0.3.14"
