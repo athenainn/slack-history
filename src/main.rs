@@ -13,8 +13,8 @@ use std::collections::BTreeMap;
 
 #[derive(RustcDecodable, RustcEncodable)]
 struct Profile {
-  //first_name: String,
-  //last_name: String,
+  // first_name: String,
+  // last_name: String,
   real_name: String,
   real_name_normalized: String,
   email: String,
@@ -30,7 +30,7 @@ struct User {
   id: String,
   name: String,
   deleted: bool,
-  status: String,
+  // status: String,
   color: String,
   real_name: String,
   tz: String,
@@ -90,9 +90,7 @@ fn get_http_content<'a>(url: &'a str) -> String {
 pub fn main() {
   let api_conf = get_slack_api_conf("slack.conf");
   let mut user_list_api = format!("https://slack.com/api/users.list?token={}&pretty=1", api_conf.token);
-  user_list_api = format!("http://114.44.248.103:8000/json.txt");
   let content = get_http_content(user_list_api.trim());
-  println!("result is {}", content);
   // println!("{}", content.trim());
   let users : Users = json::decode(&content.trim()).unwrap();
   // println!("data: {:?}", data);
