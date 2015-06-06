@@ -39,19 +39,29 @@ pub fn main() {
   let re = Regex::new(r"<@(U[a-zA-Z0-9]+)").unwrap();
   loop {
     if let Some(message) = messages_it.next() {
+      let mut user_str = match str::from_utf8(message.user.as_bytes()) {	  
+        Ok(e) => e,
+        Err(e) => panic!("Invalid UTF-8 sequence"),
+      };
       let mut text_str = match str::from_utf8(message.text.as_bytes()) {	  
         Ok(e) => e,
         Err(e) => panic!("Invalid UTF-8 sequence"),
       };
-      let mut final_str = text_str.to_string();
+      let mut final_user_str = user_str.to_string();
+      let mut final_text_str = text_str.to_string();
+      let user_id = user_str.to_string();
+      if !id_name_mapping.contains_key(&user_id) {
+        continue;
+      }
+      final_user_str = final_user_str.replace(user_str, id_name_mapping.get(&user_id).unwrap());
       for cap in re.captures_iter(text_str) {
         let user_id = cap.at(1).unwrap_or("").to_string();
         if !id_name_mapping.contains_key(&user_id) {
           continue;
         }
-        final_str = final_str.replace(cap.at(1).unwrap_or(""), id_name_mapping.get(&user_id).unwrap());
+        final_text_str = final_text_str.replace(cap.at(1).unwrap_or(""), id_name_mapping.get(&user_id).unwrap());
       }
-      println!("{}", final_str);
+      println!("{} said : {}", final_user_str, final_text_str);
     } else {
       break;
     }
