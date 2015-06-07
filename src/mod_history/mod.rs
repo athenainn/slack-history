@@ -7,6 +7,7 @@ pub mod history {
   pub struct Message {
     pub user: String,
     pub text: String,
+    pub ts : String,
   }
   
   #[derive(RustcDecodable, RustcEncodable)]
